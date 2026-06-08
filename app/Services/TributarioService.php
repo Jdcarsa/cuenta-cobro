@@ -7,6 +7,7 @@ class TributarioService
     public const PARAMETROS = [
         2024 => ['uvt' => 47065, 'smmlv' => 1300000],
         2025 => ['uvt' => 49799, 'smmlv' => 1423500],
+        2026 => ['uvt' => 52700, 'smmlv' => 1750905],
     ];
 
     public const RETENCIONES = [

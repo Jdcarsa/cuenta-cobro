@@ -239,7 +239,7 @@ cuenta-cobro-co/
 
 ## ⚠️ Aviso legal
 
-Esta herramienta es de carácter **orientativo**. Los cálculos se basan en la normativa tributaria y laboral colombiana vigente para los años 2024 y 2025, pero pueden existir casos particulares, tarifas municipales de ICA distintas o situaciones especiales no contempladas. **Siempre confirma los valores con tu asesor contable o tributario** antes de presentar documentos oficiales.
+Esta herramienta es de carácter **orientativo**. Los cálculos se basan en la normativa tributaria y laboral colombiana vigente, pero pueden existir casos particulares, tarifas municipales de ICA distintas o situaciones especiales no contempladas. **Siempre confirma los valores con tu asesor contable o tributario** antes de presentar documentos oficiales.
 
 ---
 
