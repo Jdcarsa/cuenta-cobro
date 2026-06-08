@@ -4,6 +4,38 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Solo lo que Tailwind no puede expresar con clases utilitarias */
+@layer components {
+  .tab-btn        { @apply bg-transparent border-0 border-b-2 border-transparent px-4 py-2 text-sm text-gray-500 cursor-pointer font-sans inline-flex items-center gap-1.5 -mb-px transition-colors; }
+  .tab-btn.active { @apply border-gray-900 text-gray-900 font-medium; }
+  .tab-pane       { @apply hidden; }
+  .tab-pane.active{ @apply block; }
+  .pill           { @apply rounded-md px-2.5 py-1.5; }
+  .pill .lbl      { @apply text-[11px] text-gray-500 m-0; }
+  .pill .val      { @apply text-[13px] font-medium m-0; }
+  .tfoot-row td   { @apply bg-gray-50 font-semibold border-t-2 border-gray-300; }
+  .sec-label      { @apply text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2.5; }
+  .letras-box     { @apply bg-gray-50 border-l-4 border-gray-300 px-3.5 py-2.5 text-xs text-gray-500 mt-3; }
+  .badge          { @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px]; }
+  .badge-ind      { @apply bg-blue-50 text-blue-800; }
+  .badge-emp      { @apply bg-green-50 text-green-800; }
+  .api-dot        { @apply w-2 h-2 rounded-full bg-gray-300 flex-shrink-0; }
+  .spinner        { @apply inline-block w-3.5 h-3.5 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin; }
+  .toast          { @apply px-4 py-2.5 rounded-lg text-sm flex items-center gap-2 shadow-md max-w-sm; }
+  .toast-ok       { @apply bg-green-50 text-green-800; }
+  .toast-err      { @apply bg-red-50 text-red-800; }
+}
+
+@layer utilities {
+  .animate-slidein {
+    animation: slidein 0.2s ease;
+  }
+  @keyframes slidein {
+    from { transform: translateX(20px); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+  }
 }

@@ -4,19 +4,19 @@ namespace App\Services;
 
 class TributarioService
 {
-    const PARAMETROS = [
+    public const PARAMETROS = [
         2024 => ['uvt' => 47065, 'smmlv' => 1300000],
         2025 => ['uvt' => 49799, 'smmlv' => 1423500],
     ];
 
-    const RETENCIONES = [
+    public const RETENCIONES = [
         'servicios'    => ['pct' => 0.04,  'uvt_base' => 4,  'label' => 'Servicios'],
         'honorarios'   => ['pct' => 0.11,  'uvt_base' => 0,  'label' => 'Honorarios'],
         'arrendamiento'=> ['pct' => 0.035, 'uvt_base' => 27, 'label' => 'Arrendamiento'],
         'compraventa'  => ['pct' => 0.025, 'uvt_base' => 27, 'label' => 'Compraventa'],
     ];
 
-    const ARL_TASAS = [
+    public const ARL_TASAS = [
         'I'   => 0.00522,
         'II'  => 0.01044,
         'III' => 0.02436,
