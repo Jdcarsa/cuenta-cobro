@@ -1,14 +1,9 @@
-function actualizarSelectLiq() {
-    const sel = document.getElementById('liq-persona');
-    const cur = sel.value;
-    sel.innerHTML = !personas.length
-        ? '<option>— Agrega personas primero —</option>'
-        : personas.map(p =>
-            `<option value="${p.id}" ${p.id == cur ? 'selected' : ''}>${p.nombre || 'Persona ' + p.id}</option>`
-        ).join('');
-}
+import { personas, actualizarSelectLiq } from './state.js';
+import { toast, setLoading, fCOP } from './helpers.js';
+import { apiFetch, firstError } from './api.js';
 
-function buildLiqPayload() {
+
+export function buildLiqPayload() {
     const pid = parseInt(document.getElementById('liq-persona').value);
     const p = personas.find(x => x.id === pid);
     if (!p) return null;
@@ -29,30 +24,30 @@ function buildLiqPayload() {
     };
 }
 
-// Preview local instantáneo
-function renderLiq() {
+
+export function renderLiq() {
     const pid = parseInt(document.getElementById('liq-persona').value);
     const p = personas.find(x => x.id === pid);
     const res = document.getElementById('liq-result');
     if (!p) { res.innerHTML = ''; return; }
 
-    const anio = parseInt(document.getElementById('anio').value) || 2026;
-    const pm = window.APP.parametros[anio] || window.APP.parametros[2026];
-    const inicio = new Date(document.getElementById('liq-inicio').value);
-    const fin = new Date(document.getElementById('liq-fin').value);
-    const motivo = document.getElementById('liq-motivo').value;
+    const anio      = parseInt(document.getElementById('anio').value) || 2026;
+    const pm        = window.APP.parametros[anio] || window.APP.parametros[2026];
+    const inicio    = new Date(document.getElementById('liq-inicio').value);
+    const fin       = new Date(document.getElementById('liq-fin').value);
+    const motivo    = document.getElementById('liq-motivo').value;
     const diasPrima = parseInt(document.getElementById('liq-dias-prima').value) || 0;
-    const diasVac = parseInt(document.getElementById('liq-dias-vac').value) || 0;
+    const diasVac   = parseInt(document.getElementById('liq-dias-vac').value) || 0;
 
-    const dias = Math.max(0, Math.floor((fin - inicio) / 86_400_000));
+    const dias  = Math.max(0, Math.floor((fin - inicio) / 86_400_000));
     const meses = dias / 30;
-    const sal = p.bruto;
-    const salD = sal / 30;
+    const sal   = p.bruto;
+    const salD  = sal / 30;
 
     const prima = Math.round(sal * diasPrima / 360);
-    const ces = Math.round(sal * dias / 360);
-    const intC = Math.round(ces * 0.12 * (dias / 360));
-    const vac = Math.round(salD * diasVac);
+    const ces   = Math.round(sal * dias / 360);
+    const intC  = Math.round(ces * 0.12 * (dias / 360));
+    const vac   = Math.round(salD * diasVac);
 
     let ind = 0;
     if (motivo === 'despido_sin') {
@@ -64,47 +59,92 @@ function renderLiq() {
 
     const total = prima + ces + intC + vac + ind;
 
-    const frow = (lbl, val, nota, red = false) => `
-    <tr>
-      <td style="${red ? 'color:var(--red);' : ''}">${lbl}</td>
-      <td style="font-weight:500;${red ? 'color:var(--red);' : ''}">${fCOP(val)}</td>
-      <td style="font-size:12px;color:var(--muted);">${nota}</td>
-    </tr>`;
+    const motivoLabel = {
+        renuncia:      'Renuncia voluntaria',
+        despido_justa: 'Despido con justa causa',
+        despido_sin:   'Despido sin justa causa',
+        mutuo:         'Mutuo acuerdo',
+    }[motivo] || motivo;
+
+  const fila = (icono, concepto, valor, formula, rojo = false) => `
+      <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+          <td class="py-3 px-4">
+              <div class="flex items-center gap-2">
+                  <i class="ti ${icono} text-base ${rojo ? 'text-red-400' : 'text-gray-400'}"></i>
+                  <span class="text-sm font-medium ${rojo ? 'text-red-600' : 'text-gray-800'}">${concepto}</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5 ml-6">${formula}</p>
+          </td>
+          <td class="py-3 px-4 text-right">
+              <span class="text-sm font-semibold ${rojo ? 'text-red-600' : 'text-gray-900'}">${fCOP(valor)}</span>
+          </td>
+      </tr>`;
 
     res.innerHTML = `
-    <div class="card">
-      <p class="sec-label">Previsualización local — ${p.nombre}</p>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">
-        ${inicio.toLocaleDateString('es-CO')} → ${fin.toLocaleDateString('es-CO')}
-        · ${dias} días · ${motivo.replace('_', ' ')}
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th style="text-align:left;">Concepto</th>
-            <th>Valor</th>
-            <th style="text-align:left;">Fórmula</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${frow('Prima de servicios', prima, 'Salario × ' + diasPrima + ' días / 360')}
-          ${frow('Cesantías', ces, 'Salario × ' + dias + ' días / 360')}
-          ${frow('Intereses sobre cesantías', intC, 'Cesantías × 12% × (días/360)')}
-          ${frow('Vacaciones pendientes', vac, '(Salario/30) × ' + diasVac + ' días')}
-          ${motivo === 'despido_sin' ? frow('Indemnización sin justa causa', ind, 'Art. 64 CST', true) : ''}
-        </tbody>
-        <tfoot>
-          <tr class="tfoot-row">
-            <td>Total liquidación</td>
-            <td style="color:var(--green);">${fCOP(total)}</td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>`;
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mt-3">
+
+            <div class="bg-gray-900 text-white px-4 py-3 flex items-center justify-between">
+                <div>
+                    <p class="font-semibold text-sm">Liquidación — ${p.nombre}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">${motivoLabel}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-400">Período</p>
+                    <p class="text-xs font-medium">
+                        ${inicio.toLocaleDateString('es-CO')} → ${fin.toLocaleDateString('es-CO')}
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
+                <div class="px-4 py-2.5 text-center">
+                    <p class="text-xs text-gray-400">Días trabajados</p>
+                    <p class="text-base font-semibold text-gray-900">${dias}</p>
+                </div>
+                <div class="px-4 py-2.5 text-center">
+                    <p class="text-xs text-gray-400">Meses</p>
+                    <p class="text-base font-semibold text-gray-900">${meses.toFixed(1)}</p>
+                </div>
+                <div class="px-4 py-2.5 text-center">
+                    <p class="text-xs text-gray-400">Salario base</p>
+                    <p class="text-base font-semibold text-gray-900">${fCOP(sal)}</p>
+                </div>
+            </div>
+
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-2.5">
+                            Concepto / Fórmula
+                        </th>
+                        <th class="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-2.5">
+                            Valor
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${fila('ti-file-text',        'Prima de servicios',          prima, `Salario × ${diasPrima} días / 360`)}
+                    ${fila('ti-pig-money',        'Cesantías',                   ces,   `Salario × ${dias} días / 360`)}
+                    ${fila('ti-trending-up',      'Intereses sobre cesantías',   intC,  `Cesantías × 12% × (${dias} días / 360)`)}
+                    ${fila('ti-beach',            'Vacaciones pendientes',        vac,   `(Salario / 30) × ${diasVac} días`)}
+                    ${motivo === 'despido_sin' ? fila('ti-gavel', 'Indemnización sin justa causa', ind, 'Art. 64 CST — según salario y tiempo servido', true) : ''}
+                </tbody>
+            </table>
+
+            <div class="border-t-2 border-gray-200 bg-gray-50 px-4 py-3 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-gray-900">Total liquidación</p>
+                    <p class="text-xs text-gray-400 mt-0.5">Previsualización local · confirmar con la API</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xl font-bold text-green-700">${fCOP(total)}</p>
+                </div>
+            </div>
+
+        </div>`;
 }
 
-async function calcularLiqAPI() {
+export async function calcularLiqAPI() {
     const payload = buildLiqPayload();
     if (!payload) { toast('Selecciona una persona.', 'err'); return; }
     setLoading('btn-liq-api', true);
@@ -151,7 +191,7 @@ async function calcularLiqAPI() {
     finally { setLoading('btn-liq-api', false); }
 }
 
-async function descargarLiqPDF() {
+export async function descargarLiqPDF() {
     const payload = buildLiqPayload();
     if (!payload) { toast('Selecciona una persona.', 'err'); return; }
     setLoading('btn-liq-pdf', true);
@@ -167,3 +207,4 @@ async function descargarLiqPDF() {
     } catch (e) { toast(e.message, 'err'); }
     finally { setLoading('btn-liq-pdf', false); }
 }
+

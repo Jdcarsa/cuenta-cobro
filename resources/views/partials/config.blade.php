@@ -56,9 +56,9 @@
         @endforeach
       </select>
     </div>
-    <button id="btn-calcular" onclick="calcularAPI()"
+    <button id="btn-calcular" data-action="calcularAPI"
             class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 transition-colors">
-      <i class="ti ti-calculator"></i> Calcular con API
+      <i class="ti ti-calculator"></i> Calcular
     </button>
   </div>
 
@@ -69,11 +69,11 @@
   <div id="resumen-tabla" class="overflow-x-auto"></div>
   <div id="letras-resultado" class="letras-box"></div>
   <div class="flex gap-2 mt-3 flex-wrap">
-    <button id="btn-pdf" onclick="guardarYDescargar('pdf')"
+    <button id="btn-pdf" data-action="guardarYDescargar" data-fmt="pdf"
             class="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 transition-colors">
       <i class="ti ti-file-type-pdf"></i> Guardar y descargar PDF
     </button>
-    <button id="btn-csv" onclick="guardarYDescargar('csv')"
+    <button id="btn-csv" data-action="guardarYDescargar" data-fmt="csv"
             class="flex items-center gap-2 px-4 py-2 border border-gray-200 text-sm rounded-lg hover:bg-gray-50 transition-colors">
       <i class="ti ti-download"></i> Guardar y descargar CSV
     </button>

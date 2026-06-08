@@ -1,24 +1,25 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import { bunny } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
-            fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                }),
+            refresh: [
+                'resources/views/**',        // todas las vistas Blade
+                'resources/js/**',           // todos los JS
+                'resources/css/**',          // todos los CSS
+                'app/Services/**',           // si cambias TributarioService
+                'routes/**',                 // rutas
             ],
         }),
         tailwindcss(),
     ],
     server: {
         watch: {
-            ignored: ['**/storage/framework/views/**'],
+            usePolling: true,    // ← importante en Linux/Zorin OS
+            interval: 500,
         },
     },
 });
