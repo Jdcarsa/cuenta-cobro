@@ -10,7 +10,7 @@ export function apiFetch(path, method = 'GET', body = null) {
     const opts = {
         method,
         headers: {
-            'Accept':       'application/json',
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': window.APP.csrfToken,
         },
     };
@@ -24,19 +24,19 @@ export function apiFetch(path, method = 'GET', body = null) {
 export function buildPayload() {
     return {
         empresa_nombre: document.getElementById('emp-nombre').value,
-        empresa_nit:    document.getElementById('emp-nit').value,
+        empresa_nit: document.getElementById('emp-nit').value,
         empresa_ciudad: document.getElementById('emp-ciudad').value,
-        mes_cobro:      document.getElementById('mes-cobro').value,
-        anio:           parseInt(document.getElementById('anio').value),
-        tipo_contrato:  document.getElementById('tipo-contrato').value,
-        cobra_iva:      document.getElementById('cobra-iva').value === '1',
+        mes_cobro: document.getElementById('mes-cobro').value,
+        anio: parseInt(document.getElementById('anio').value),
+        tipo_contrato: document.getElementById('tipo-contrato').value,
+        cobra_iva: document.getElementById('cobra-iva').value === '1',
         personas: personas.map(p => ({
-            nombre:           p.nombre,
-            cedula:           p.cedula,
-            vinculacion:      p.vinculacion,
+            nombre: p.nombre,
+            cedula: p.cedula,
+            vinculacion: p.vinculacion,
             nivel_riesgo_arl: p.riesgo,
-            valor_bruto:      p.bruto,
-            actividades:      p.actividades,
+            valor_bruto: p.bruto,
+            actividades: p.actividades,
         })),
     };
 }
@@ -59,13 +59,13 @@ export async function calcularAPI() {
     if (!personas.length) { toast('Agrega al menos una persona.', 'err'); return; }
     setLoading('btn-calcular', true);
     try {
-        const r    = await apiFetch('/api/cuentas-cobro/calcular', 'POST', buildPayload());
+        const r = await apiFetch('/api/cuentas-cobro/calcular', 'POST', buildPayload());
         const data = await r.json();
         if (!r.ok) throw new Error(firstError(data));
         renderResumen(data);
         document.getElementById('resumen-card').classList.remove('hidden');
         toast('Cálculo completado.');
-    } catch(e) { toast(e.message, 'err'); }
+    } catch (e) { toast(e.message, 'err'); }
     finally { setLoading('btn-calcular', false); }
 }
 
@@ -117,12 +117,12 @@ export async function guardarYDescargar(fmt) {
     if (!personas.length) { toast('Agrega personas primero.', 'err'); return; }
     setLoading('btn-' + fmt, true);
     try {
-        const r    = await apiFetch('/api/cuentas-cobro', 'POST', buildPayload());
+        const r = await apiFetch('/api/cuentas-cobro', 'POST', buildPayload());
         const data = await r.json();
         if (!r.ok) throw new Error(firstError(data));
         toast(`Guardado como #${data.id}. Descargando ${fmt.toUpperCase()}...`);
         window.open(window.APP.baseUrl + `/api/cuentas-cobro/${data.id}/${fmt}`, '_blank');
-    } catch(e) { toast(e.message, 'err'); }
+    } catch (e) { toast(e.message, 'err'); }
     finally { setLoading('btn-' + fmt, false); }
 }
 
@@ -130,7 +130,7 @@ export async function cargarHistorial() {
     const cont = document.getElementById('historial-content');
     cont.innerHTML = '<p class="text-gray-400 text-center py-8"><span class="spinner"></span></p>';
     try {
-        const r    = await apiFetch('/api/cuentas-cobro');
+        const r = await apiFetch('/api/cuentas-cobro');
         const data = await r.json();
         if (!r.ok) throw new Error('Error al cargar');
         const items = data.data || [];
@@ -139,44 +139,56 @@ export async function cargarHistorial() {
             return;
         }
         const filas = items.map(c => `
-            <tr>
-              <td class="text-left px-3 py-2">#${c.id}</td>
-              <td class="text-left px-3 py-2">${c.empresa_nombre}</td>
-              <td class="text-left px-3 py-2">${c.mes_cobro} ${c.anio}</td>
-              <td class="text-left px-3 py-2">${c.tipo_contrato}</td>
-              <td class="text-right px-3 py-2">${fCOP(c.total_bruto)}</td>
-              <td class="text-right px-3 py-2 text-green-700 font-medium">${fCOP(c.total_neto)}</td>
-              <td class="text-center px-3 py-2">
+    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+        <td class="px-4 py-3 text-xs text-gray-400 font-mono">#${c.id}</td>
+        <td class="px-4 py-3">
+            <p class="text-sm font-medium text-gray-800">${c.empresa_nombre}</p>
+            <p class="text-xs text-gray-400">${c.empresa_ciudad || ''}</p>
+        </td>
+        <td class="px-4 py-3 text-sm text-gray-600">${c.mes_cobro} ${c.anio}</td>
+        <td class="px-4 py-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">
+                ${c.tipo_contrato}
+            </span>
+        </td>
+        <td class="px-4 py-3 text-right text-sm text-gray-600">${fCOP(c.total_bruto)}</td>
+        <td class="px-4 py-3 text-right text-sm font-semibold text-green-700">${fCOP(c.total_neto)}</td>
+        <td class="px-4 py-3">
+            <div class="flex items-center justify-center gap-1.5">
                 <button onclick="window.open('${window.APP.baseUrl}/api/cuentas-cobro/${c.id}/pdf','_blank')"
-                        class="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-50 mr-1">
-                  <i class="ti ti-file-type-pdf"></i>
+                        title="Descargar PDF"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors">
+                    <i class="ti ti-file-type-pdf text-base"></i>
                 </button>
                 <button onclick="window.open('${window.APP.baseUrl}/api/cuentas-cobro/${c.id}/csv','_blank')"
-                        class="px-2 py-1 border border-gray-200 rounded text-xs hover:bg-gray-50">
-                  <i class="ti ti-download"></i>
+                        title="Descargar CSV"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-200 text-gray-500 hover:bg-green-50 hover:text-green-600 hover:border-green-200 transition-colors">
+                    <i class="ti ti-table-export text-base"></i>
                 </button>
-              </td>
-            </tr>`).join('');
+            </div>
+        </td>
+    </tr>`).join('');
 
         cont.innerHTML = `
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm border-collapse bg-white border border-gray-200 rounded-xl overflow-hidden">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th class="text-left px-3 py-2 text-xs font-medium text-gray-500 border-b">ID</th>
-                    <th class="text-left px-3 py-2 text-xs font-medium text-gray-500 border-b">Empresa</th>
-                    <th class="text-left px-3 py-2 text-xs font-medium text-gray-500 border-b">Período</th>
-                    <th class="text-left px-3 py-2 text-xs font-medium text-gray-500 border-b">Tipo</th>
-                    <th class="text-right px-3 py-2 text-xs font-medium text-gray-500 border-b">Bruto</th>
-                    <th class="text-right px-3 py-2 text-xs font-medium text-gray-500 border-b">Neto</th>
-                    <th class="text-center px-3 py-2 text-xs font-medium text-gray-500 border-b">Descargar</th>
-                  </tr>
-                </thead>
-                <tbody>${filas}</tbody>
-              </table>
-            </div>
-            <p class="text-xs text-gray-400 mt-2">${data.total || items.length} registros totales.</p>`;
-    } catch(e) {
+    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+        <table class="w-full text-sm border-collapse">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Empresa</th>
+                    <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Período</th>
+                    <th class="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                    <th class="text-right px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Bruto</th>
+                    <th class="text-right px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Neto</th>
+                    <th class="text-center px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Archivos</th>
+                </tr>
+            </thead>
+            <tbody>${filas}</tbody>
+        </table>
+    </div>
+    <p class="text-xs text-gray-400 mt-2 px-1">${data.total || items.length} registros guardados.</p>`;
+
+    } catch (e) {
         cont.innerHTML = `<p class="text-red-500 text-center py-8"><i class="ti ti-alert-circle"></i> ${e.message}</p>`;
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CuentaCobro extends Model
 {
+    protected $table = 'cuentas_cobro';
+    
     protected $fillable = [
         'empresa_nombre', 'empresa_nit', 'empresa_ciudad',
         'mes_cobro', 'anio', 'tipo_contrato', 'cobra_iva',

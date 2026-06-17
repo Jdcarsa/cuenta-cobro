@@ -115,18 +115,36 @@
   <strong>Son:</strong> {{ $enLetras }}
 </div>
 
-<div class="firma">
-  <div class="firma-bloque">
-    <div class="firma-linea">
-      Representante legal<br>
-      {{ $empresa['empresa_nombre'] }}<br>
-      NIT: {{ $empresa['empresa_nit'] }}
+<div style="margin-top:60px;">
+  <div style="display:flex; justify-content:space-between; gap:40px;">
+
+    <div style="flex:1; text-align:center;">
+      <div style="border-top:1.5px solid #1a1a1a; padding-top:8px; margin-top:50px;">
+        <p style="font-weight:bold; font-size:11px; margin:0;">{{ $empresa['empresa_nombre'] }}</p>
+        <p style="font-size:10px; color:#555; margin:3px 0 0;">NIT: {{ $empresa['empresa_nit'] }}</p>
+        <p style="font-size:10px; color:#555; margin:2px 0 0;">Representante legal</p>
+      </div>
     </div>
+
+    <div style="flex:1; text-align:center;">
+      <div style="border-top:1.5px solid #1a1a1a; padding-top:8px; margin-top:50px;">
+        @if(count($liquidaciones) === 1)
+          <p style="font-weight:bold; font-size:11px; margin:0;">{{ $liquidaciones[0]['nombre'] }}</p>
+          <p style="font-size:10px; color:#555; margin:3px 0 0;">Trabajador / Prestador</p>
+        @else
+          <p style="font-weight:bold; font-size:11px; margin:0;">Trabajador / Prestador</p>
+          <p style="font-size:10px; color:#555; margin:3px 0 0;">Firma y cédula</p>
+        @endif
+      </div>
+    </div>
+
   </div>
-  <div class="firma-bloque">
-    <div class="firma-linea">
-      Trabajador / Prestador<br>&nbsp;
-    </div>
+
+  <div style="margin-top:24px; border-top:0.5px solid #e0e0e0; padding-top:10px;
+              display:flex; justify-content:space-between; font-size:9px; color:#999;">
+    <span>Documento generado el {{ $fecha }}</span>
+    <span>Valores calculados según normativa laboral colombiana vigente {{ $anio }}</span>
+    <span>Página 1</span>
   </div>
 </div>
 

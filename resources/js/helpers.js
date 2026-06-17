@@ -32,10 +32,8 @@ export function showTab(name) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
 
-    // Actualizar select siempre que se abra liquidación
     if (name === 'liquidacion') {
         actualizarSelectLiq();
-        // renderLiq se dispara desde app.js
     }
     if (name === 'historial') {
         // cargarHistorial se dispara desde app.js

@@ -100,17 +100,38 @@
   <strong>Son:</strong> {{ $enLetras }}
 </div>
 
-<div class="firma">
-  <div class="firma-bloque">
-    <div class="firma-linea">
-      Firma del pagador<br>{{ $cuenta->empresa_nombre }}<br>NIT: {{ $cuenta->empresa_nit }}
+<div style="margin-top:60px;">
+    <div style="display:flex; justify-content:space-between; gap:60px;">
+
+        <div style="flex:1; text-align:center;">
+            <div style="margin-top:48px; border-top:1.5px solid #1a1a1a; padding-top:8px;">
+                <p style="font-weight:bold; font-size:11px; margin:0;">{{ $cuenta->empresa_nombre }}</p>
+                <p style="font-size:10px; color:#555; margin:3px 0 0;">NIT: {{ $cuenta->empresa_nit }}</p>
+                <p style="font-size:10px; color:#888; margin:2px 0 0;">Firma del pagador</p>
+            </div>
+        </div>
+
+        <div style="flex:1; text-align:center;">
+            <div style="margin-top:48px; border-top:1.5px solid #1a1a1a; padding-top:8px;">
+                @if($personas->count() === 1)
+                    <p style="font-weight:bold; font-size:11px; margin:0;">{{ $personas->first()->nombre }}</p>
+                    <p style="font-size:10px; color:#555; margin:3px 0 0;">C.C. {{ $personas->first()->cedula }}</p>
+                @else
+                    <p style="font-weight:bold; font-size:11px; margin:0;">Prestador de servicios</p>
+                    <p style="font-size:10px; color:#555; margin:3px 0 0;">Nombre y cédula</p>
+                @endif
+                <p style="font-size:10px; color:#888; margin:2px 0 0;">Firma del prestador</p>
+            </div>
+        </div>
+
     </div>
-  </div>
-  <div class="firma-bloque">
-    <div class="firma-linea">
-      Firma del prestador de servicios<br>&nbsp;
+
+    <div style="margin-top:28px; padding-top:10px; border-top:0.5px solid #ddd;
+                display:flex; justify-content:space-between; font-size:9px; color:#aaa;">
+        <span>Generado el {{ $fecha }}</span>
+        <span>Normativa tributaria colombiana · {{ $cuenta->anio }}</span>
+        <span>Documento orientativo — verificar con asesor contable</span>
     </div>
-  </div>
 </div>
 
 </body>

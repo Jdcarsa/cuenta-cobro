@@ -24,7 +24,7 @@ class CuentaCobroController extends Controller
         $data = $request->validate([
             'tipo_contrato'    => 'required|in:servicios,honorarios,arrendamiento,compraventa',
             'cobra_iva'        => 'boolean',
-            'anio'             => 'integer|in:2024,2025',
+            'anio'             => 'integer|in:2024,2025,2026',
             'personas'         => 'required|array|min:1',
             'personas.*.nombre'          => 'required|string',
             'personas.*.cedula'          => 'nullable|string',
@@ -57,7 +57,7 @@ class CuentaCobroController extends Controller
             'empresa_nit'      => 'required|string|max:30',
             'empresa_ciudad'   => 'required|string|max:100',
             'mes_cobro'        => 'required|string',
-            'anio'             => 'integer|in:2024,2025',
+            'anio'             => 'integer|in:2024,2025,2026',
             'tipo_contrato'    => 'required|in:servicios,honorarios,arrendamiento,compraventa',
             'cobra_iva'        => 'boolean',
             'personas'         => 'required|array|min:1',

@@ -2,7 +2,7 @@ import { showTab, toast, setLoading, fCOP } from './helpers.js';
 import { renderPersonas, agregarPersona, eliminarPersona, upd } from './personas.js';
 import { renderLiq, calcularLiqAPI, descargarLiqPDF } from './liquidacion.js';
 import { verificarAPI, calcularAPI, guardarYDescargar, cargarHistorial } from './api.js';
-import { actualizarSelectLiq } from './state.js';
+import { actualizarSelectLiq, personas } from './state.js';
 
 const ACTIONS = {
     calcularAPI,
@@ -52,4 +52,5 @@ window.fCOP            = fCOP;
 
 document.addEventListener('DOMContentLoaded', () => {
     verificarAPI();
+    if (personas.length) renderPersonas();
 });

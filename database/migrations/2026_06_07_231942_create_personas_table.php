@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('personas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cuenta_cobro_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('cuenta_cobro_id')->constrained('cuentas_cobro')->cascadeOnDelete();
             $table->string('nombre');
             $table->string('cedula')->nullable();
             $table->enum('vinculacion', ['independiente', 'empleado']);

@@ -16,7 +16,7 @@ class LiquidacionController extends Controller
     public function calcular(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'anio'                    => 'integer|in:2024,2025',
+            'anio'                    => 'integer|in:2024,2025,2026',
             'personas'                => 'required|array|min:1',
             'personas.*.nombre'       => 'required|string',
             'personas.*.valor_bruto'  => 'required|numeric|min:0',
@@ -48,7 +48,7 @@ class LiquidacionController extends Controller
             'empresa_nombre'          => 'required|string',
             'empresa_nit'             => 'required|string',
             'empresa_ciudad'          => 'required|string',
-            'anio'                    => 'integer|in:2024,2025',
+            'anio'                    => 'integer|in:2024,2025,2026',
             'personas'                => 'required|array|min:1',
             'personas.*.nombre'       => 'required|string',
             'personas.*.valor_bruto'  => 'required|numeric|min:0',

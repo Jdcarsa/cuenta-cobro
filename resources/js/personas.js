@@ -4,29 +4,23 @@ import { fCOP } from './helpers.js';
 export function agregarPersona() {
     const id = incrementId();
     addPersona({ id, nombre: '', cedula: '', vinculacion: 'independiente', riesgo: 'I', bruto: 3000000, actividades: '' });
-    renderPersonas();  // render completo solo al agregar
+    renderPersonas();
 }
 
 export function eliminarPersona(id) {
     removePersona(id);
-    renderPersonas();  // render completo solo al eliminar
+    renderPersonas(); 
 }
 
 export function upd(id, campo, val) {
     const p = personas.find(p => p.id === id);
     if (!p) return;
     p[campo] = campo === 'bruto' ? parseFloat(val) || 0 : val;
-
-    // Si cambia vinculacion o riesgo → re-render completo (cambia estructura)
     if (campo === 'vinculacion' || campo === 'riesgo') {
         renderPersonas();
         return;
     }
-
-    // Para el resto solo actualiza las pills, sin tocar los inputs
     actualizarPills(id);
-
-    // Actualiza el select de liquidación si cambió el nombre
     if (campo === 'nombre') actualizarSelectLiq();
 }
 
